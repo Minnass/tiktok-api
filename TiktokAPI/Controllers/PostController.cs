@@ -11,7 +11,7 @@ namespace TiktokAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    //[Authorize(AuthenticationSchemes = "Bearer")]
     public class PostController : ControllerBase
     {
         private readonly IPostService postService;
@@ -28,24 +28,25 @@ namespace TiktokAPI.Controllers
           
         }
         [AllowAnonymous]
-        [HttpGet("{search}")]
+        [HttpGet("getAll/{search}")]
         public ActionResult GetAll(string? search)
         {
             var result = this.postService.getAll(search);
             return Ok(new ApiResponse("Success", 200, data: result));
         }
-        //[HttpGet("{videoID}")]
-        //public ActionResult GetVideo(long videoID)
-        //{
-        //    var result = this.postService.GetVideo(videoID);
-        //    return Ok(new ApiResponse("Success", 200, data: result));
-        //}
-        //[HttpDelete("{videoID}")]
-        //public ActionResult DeleteVideo(long videoID)
-        //{
-        //    this.postService.DeletePost(videoID);
-        //    return Ok(new ApiResponse("Success", 200));
-        //}
+        [AllowAnonymous]
+        [HttpGet("{videoID}")]
+        public ActionResult GetVideo(long videoID)
+        {
+            var result = this.postService.GetVideo(videoID);
+            return Ok(new ApiResponse("Success", 200, data: result));
+        }
+        [HttpDelete("{videoID}")]
+        public ActionResult DeleteVideo(long videoID)
+        {
+            this.postService.DeletePost(videoID);
+            return Ok(new ApiResponse("Success", 200));
+        }
 
     }
 }

@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 using TiktokAPI.Core.Interfaces;
 using TiktokAPI.Entities;
+using TiktokAPI.Models;
 using TiktokAPI.Models.Account;
 using TiktokAPI.Models.Post;
 using TiktokAPI.Services.Interfaces;
@@ -90,32 +91,47 @@ namespace TiktokAPI.Services
             uow.SaveChanges();
         }
 
-        public VideoModel GetVideo(long videoID)
+        public VideoOverview GetVideo(long videoID)
         {
             Expression<Func<Video, bool>> predicate = x => x.IsDeleted == false && x.VideoId == videoID;
             var result = uow.GetRepository<Video>().Queryable()
                 .AsNoTracking()
                 .Include(x => x.User)
                 .Include(x => x.Comments)
+                .ThenInclude(y => y.User)
                 .Include(x => x.HashtagVideos)
+                .ThenInclude(y => y.HasTag)
                 .Include(x => x.Likes)
                 .Where(predicate).FirstOrDefault();
             if (result == null)
             {
                 throw new Exception("Video not found");
             }
-            return new VideoModel
+            return new VideoOverview
             {
-                VideoId = result.VideoId,
+                User = new UserInfomation
+                {
+                    UserId = result.UserId,
+                    Avatar = result.User.Avatar,
+                    UserName = result.User.UserName,
+                    DisplayedName = result.User.DisplayedName
+                },
                 Caption = result.Caption,
-                UploadDate = result.UploadDate,
-                Comments = result.Comments,
+                Comment = result.Comments.Count(),
                 Like = result.Likes.Count(),
-                HashtagVideos = result.HashtagVideos,
-                User = result.User,
-                VideoUrl = result.VideoUrl
+                UploadDate = result.UploadDate,
+                VideoId = result.VideoId,
+                VideoUrl = result.VideoUrl,
+                HasTag = result.HashtagVideos.Select(z => new Models.HasTagModel
+                {
+                    HasTagId = z.HasTagId,
+                    HasTagName = z.HasTag.HashTagName
+                }).ToList()
             };
         }
+           
+       
+   
         public IList<VideoOverview> getAll(string? search)
         {
             Expression<Func<Video, bool>> predicate = x => string.IsNullOrEmpty(search) ||search=="null"|| x.Caption.Contains(search)
@@ -128,12 +144,12 @@ namespace TiktokAPI.Services
                 .Include(x => x.HashtagVideos)
                 .Where(predicate).Select(y => new VideoOverview
                 {
-                    User= new UserInfomation
+                    User = new UserInfomation
                     {
                         UserId = y.UserId,
-                        Avatar=y.User.Avatar,
-                        UserName=y.User.UserName,
-                        DisplayedName=y.User.DisplayedName
+                        Avatar = y.User.Avatar,
+                        UserName = y.User.UserName,
+                        DisplayedName = y.User.DisplayedName
                     },
                     Caption = y.Caption,
                     Comment = y.Comments.Count(),
@@ -141,10 +157,10 @@ namespace TiktokAPI.Services
                     UploadDate = y.UploadDate,
                     VideoId = y.VideoId,
                     VideoUrl = y.VideoUrl,
-                    HasTag=y.HashtagVideos.Select(z=>new Models.HasTagModel
+                    HasTag = y.HashtagVideos.Select(z => new Models.HasTagModel
                     {
-                        HasTagId=z.HasTagId,
-                        HasTagName=z.HasTag.HashTagName
+                        HasTagId = z.HasTagId,
+                        HasTagName = z.HasTag.HashTagName
                     }).ToList()
                 }).ToList();
             return result;

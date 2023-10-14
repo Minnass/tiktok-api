@@ -8,7 +8,7 @@ using TiktokAPI.Services.Interfaces;
 
 namespace TiktokAPI.Controllers
 {
-    [Authorize(AuthenticationSchemes = "Bearer")]
+    //[Authorize(AuthenticationSchemes = "Bearer")]
     [Route("api/[controller]")]
     [ApiController]
     public class LikeController : ControllerBase
@@ -31,12 +31,12 @@ namespace TiktokAPI.Controllers
             return Ok(new ApiResponse("Success", 200));
 
         }
-        //[HttpGet("{userId")]
-        //public ActionResult GetLikedVideos(long userId)
-        //{
-        //    var result=this.likeService.GetLikedVideo(userId);
-        //    return Ok(new ApiResponse("Success", 200, data: result));
-        //}
+        [HttpGet("getLikedVideo/{userId}")]
+        public ActionResult GetLikedVideos(long userId)
+        {
+            var result = this.likeService.GetLikedVideo(userId);
+            return Ok(new ApiResponse("Success", 200, data: result));
+        }
 
     }
 }

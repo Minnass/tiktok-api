@@ -25,20 +25,22 @@ namespace TiktokAPI.Models.Post
         [JsonProperty("uploadDate")]
         public DateTime? UploadDate { get; set; }
         [JsonProperty("user")]
-        public virtual User User { get; set; } = null!;
+        public UserInfomation User { get; set; } = null!;
         [JsonProperty("comments")]
-        public virtual ICollection<Comment> Comments { get; set; }
+        public List<CommentModel> Comments { get; set; }
         [JsonProperty("hashTag")]
-        public virtual ICollection<HashtagVideo> HashtagVideos { get; set; }
+        public List<HasTagModel> hashTag { get; set; }
         [JsonProperty("like")]
         public int Like { get; set; }
+        [JsonProperty("share")]
+        public int? Share { get; set; }
     }
     public class VideoOverview
     {
         [JsonProperty("videoId")]
         public long VideoId { get; set; }
         [JsonProperty("videoURL")]
-        public string VideoUrl { get; set; } = null!;
+        public string VideoUrl { get; set; } 
         [JsonProperty("caption")]
         public string? Caption { get; set; }
         [JsonProperty("uploadDate")]
@@ -47,7 +49,7 @@ namespace TiktokAPI.Models.Post
         public int Like { get; set; }
         [JsonProperty("comment")]
         public int Comment { get; set; }
-        [JsonProperty("hashTag")]
+        [JsonProperty("hasTag")]
         public List<HasTagModel> HasTag { get; set; }
         [JsonProperty("user")]
         public UserInfomation User { get; set; }

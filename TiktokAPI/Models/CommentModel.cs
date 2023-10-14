@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using TiktokAPI.Entities;
+using TiktokAPI.Models.Account;
 
 namespace TiktokAPI.Models
 {
@@ -12,10 +13,19 @@ namespace TiktokAPI.Models
         [JsonProperty("text")]
         public string? Text { get; set; }
         [JsonProperty("user")]
-        public User? User { get; set; }
+        public UserInfomation?User { get; set; }
         [JsonProperty("userId")]
         public long? UserId { get; set; }
         [JsonProperty("videoId")]
         public long? VideoId { get; set; }
+    }
+    public class CommentRequestModel
+    {
+        [JsonProperty("videoId")]
+        public long? VideoId { get; set; }
+        [JsonProperty("userId")]
+        public long? UserId { get; set; }
+        [JsonProperty("text")]
+        public string? Text { get; set; }
     }
 }

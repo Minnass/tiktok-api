@@ -6,6 +6,6 @@ namespace TiktokAPI.Services.Interfaces
     {
         IList<CommentModel> GetAll(long videoId);
         void Delete(long commentId);
-        void AddComment(CommentModel comment);
+        void AddComment(CommentRequestModel comment);
     }
 }

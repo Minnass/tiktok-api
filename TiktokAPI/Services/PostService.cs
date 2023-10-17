@@ -70,12 +70,12 @@ namespace TiktokAPI.Services
                 uow.SaveChanges();
                 uow.GetRepository<HashtagVideo>().Insert(new HashtagVideo
                 {
-                    HasTagId = (existingHashTag==null) ?hashTag.HashTagId:existingHashTag.HashTagId,
+                    HasTagId = (existingHashTag == null) ? hashTag.HashTagId : existingHashTag.HashTagId,
                     VideoId = newVideo.VideoId,
                 });
                 uow.SaveChanges();
             }
-        
+
 
         }
 
@@ -117,8 +117,8 @@ namespace TiktokAPI.Services
                     DisplayedName = result.User.DisplayedName
                 },
                 Caption = result.Caption,
-                Comment = result.Comments.Count(),
-                Like = result.Likes.Count(),
+                Comment = result.Comments.Where(x => x.IsDeleted == false).Count(),
+                Like = result.Likes.Where(x => x.IsDislike == false).Count(),
                 UploadDate = result.UploadDate,
                 VideoId = result.VideoId,
                 VideoUrl = result.VideoUrl,
@@ -129,12 +129,12 @@ namespace TiktokAPI.Services
                 }).ToList()
             };
         }
-           
-       
-   
+
+
+
         public IList<VideoOverview> getAll(string? search)
         {
-            Expression<Func<Video, bool>> predicate = x => string.IsNullOrEmpty(search) ||search=="null"|| x.Caption.Contains(search)
+            Expression<Func<Video, bool>> predicate = x => string.IsNullOrEmpty(search) || search == "null" || x.Caption.Contains(search)
             && x.IsDeleted == false;
             var result = uow.GetRepository<Video>().Queryable()
                 .AsNoTracking()
@@ -152,8 +152,8 @@ namespace TiktokAPI.Services
                         DisplayedName = y.User.DisplayedName
                     },
                     Caption = y.Caption,
-                    Comment = y.Comments.Count(),
-                    Like = y.Likes.Count(),
+                    Comment = y.Comments.Where(z => z.IsDeleted == false).Count(),
+                    Like = y.Likes.Where(z => z.IsDislike == false).Count(),
                     UploadDate = y.UploadDate,
                     VideoId = y.VideoId,
                     VideoUrl = y.VideoUrl,
@@ -165,6 +165,36 @@ namespace TiktokAPI.Services
                 }).ToList();
             return result;
 
+        }
+
+        public IList<VideoOverview> GetFollowingVideos(IList<long> ids)
+        {
+            Expression<Func<Video, bool>> predicate = x => x.IsDeleted == false
+            && ids.Contains(x.UserId);
+            var result = this.uow.GetRepository<Video>().Queryable()
+                 .AsNoTracking()
+                  .Where(predicate).Select(y => new VideoOverview
+                  {
+                      User = new UserInfomation
+                      {
+                          UserId = y.UserId,
+                          Avatar = y.User.Avatar,
+                          UserName = y.User.UserName,
+                          DisplayedName = y.User.DisplayedName
+                      },
+                      Caption = y.Caption,
+                      Comment = y.Comments.Where(z => z.IsDeleted == false).Count(),
+                      Like = y.Likes.Where(z => z.IsDislike == false).Count(),
+                      UploadDate = y.UploadDate,
+                      VideoId = y.VideoId,
+                      VideoUrl = y.VideoUrl,
+                      HasTag = y.HashtagVideos.Select(z => new Models.HasTagModel
+                      {
+                          HasTagId = z.HasTagId,
+                          HasTagName = z.HasTag.HashTagName
+                      }).ToList()
+                  }).ToList();
+            return result;
         }
     }
 }

@@ -21,7 +21,6 @@
 
   <ItemGroup>
     <Folder Include="MiddleWare\" />
-    <Folder Include="Helper\" />
   </ItemGroup>
 
 </Project>

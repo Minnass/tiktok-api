@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using TiktokAPI.Models;
 using TiktokAPI.Models.Account;
 using TiktokAPI.Models.ApiResponse;
+using TiktokAPI.Models.Collection;
 using TiktokAPI.Services.Interfaces;
 
 namespace TiktokAPI.Controllers
@@ -32,6 +33,12 @@ namespace TiktokAPI.Controllers
         public ActionResult GetFollowing(long userId)
         {
             var result = this.followService.GetFollowingUser(userId);
+            return Ok(new ApiResponse("Success", 200, data: result));
+        }
+        [HttpPost("GetFollowingForPaged")]
+        public ActionResult GetFollowingForPaged(FollowingPaged model)
+        {
+            var result = this.followService.GetFollowingUserForPaged(model);
             return Ok(new ApiResponse("Success", 200, data: result));
         }
     }

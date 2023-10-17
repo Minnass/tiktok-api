@@ -2,7 +2,11 @@
 using System.Linq.Expressions;
 using TiktokAPI.Core.Interfaces;
 using TiktokAPI.Entities;
+using TiktokAPI.Helper.Collection;
+using TiktokAPI.Helper.Collection.Interfaces;
 using TiktokAPI.Models;
+using TiktokAPI.Models.Account;
+using TiktokAPI.Models.Collection;
 using TiktokAPI.Services.Interfaces;
 
 namespace TiktokAPI.Services
@@ -46,12 +50,12 @@ namespace TiktokAPI.Services
 
         public IList<long?> GetFollower(long userId)
         {
-            Expression<Func<FollowRelationship,bool>>predicate=x=>x.IsDeleted==false
-            &&x.Followeduser==userId;
+            Expression<Func<FollowRelationship, bool>> predicate = x => x.IsDeleted == false
+            && x.Followeduser == userId;
             var result = this.uow.GetRepository<FollowRelationship>()
                 .Queryable()
             .AsNoTracking()
-            .Where(predicate).Select(x=>x.FollowerUser)
+            .Where(predicate).Select(x => x.FollowerUser)
             .ToList();
             return result;
         }
@@ -65,6 +69,25 @@ namespace TiktokAPI.Services
         .AsNoTracking()
         .Where(predicate).Select(x => x.Followeduser)
         .ToList();
+            return result;
+        }
+
+        public IList<UserInfomation> GetFollowingUserForPaged(FollowingPaged model)
+        {
+            Expression<Func<FollowRelationship, bool>> predicate = x => x.IsDeleted == false
+            && x.FollowerUser == model.UserId;
+            var queryable = this.uow.GetRepository<FollowRelationship>().Queryable()
+                .AsNoTracking()
+                .Include(x => x.FolloweduserNavigation)
+                .Where(predicate)
+                .Select(x => new UserInfomation
+                {
+                    Avatar = x.FolloweduserNavigation.Avatar,
+                    DisplayedName = x.FolloweduserNavigation.DisplayedName,
+                    UserId = x.FolloweduserNavigation.UserId,
+                    UserName = x.FolloweduserNavigation.UserName
+                });
+            var result = queryable.Take(model.PageSize * model.PageNumber).ToList();
             return result;
         }
     }

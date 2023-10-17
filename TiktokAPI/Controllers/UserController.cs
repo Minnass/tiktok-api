@@ -18,6 +18,13 @@ namespace TiktokAPI.Controllers
             this.userService = userService;
         }
 
+        [AllowAnonymous]
+        [HttpGet("{search}")]
+        public ActionResult GetUsers(string search)
+        {
+            var result = this.userService.GetUsers(search);
+            return Ok(new ApiResponse("Success", 200, data: result));
+        }
         [HttpPost("GetSuggestedUsers")]
         public ActionResult GetSuggestedUsers(SuggestedCollection model)
         {

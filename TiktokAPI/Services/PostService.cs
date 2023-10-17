@@ -130,11 +130,46 @@ namespace TiktokAPI.Services
             };
         }
 
+        public IList<VideoOverview> GetVidesByTagName(string name)
+        {
+            Expression<Func<HashtagVideo, bool>> predicate = x => string.IsNullOrEmpty(name) || name == "null" || x.HasTag.HashTagName.Contains(name);
+            var result = uow.GetRepository<HashtagVideo>().Queryable()
+               .AsNoTracking()
+               .Include(x=>x.Video)
+               .ThenInclude(y=>y.User)
+               .Include(x => x.HasTag)
+               .Where(predicate)
+              .Where(predicate).Select(y => new VideoOverview
+              {
+                  User = new UserInfomation
+                  {
+                      UserId = y.Video.UserId,
+                      Avatar = y.Video.User.Avatar,
+                      UserName = y.Video.User.UserName,
+                      DisplayedName = y.Video.User.DisplayedName
+                  },
+                  Caption = y.Video.Caption,
+                  Comment = y.Video.Comments.Where(z => z.IsDeleted == false).Count(),
+                  Like = y.Video.Likes.Where(z => z.IsDislike == false).Count(),
+                  UploadDate = y.Video.UploadDate,
+                  VideoId = y.Video.VideoId,
+                  VideoUrl = y.Video.VideoUrl,
+                  HasTag = y.Video.HashtagVideos.Select(z => new Models.HasTagModel
+                  {
+                      HasTagId = z.HasTagId,
+                      HasTagName = z.HasTag.HashTagName
+                  }).ToList()
+              }).ToList();
+            return result;
+
+        }
+
 
 
         public IList<VideoOverview> getAll(string? search)
         {
-            Expression<Func<Video, bool>> predicate = x => string.IsNullOrEmpty(search) || search == "null" || x.Caption.Contains(search)
+            Expression<Func<Video, bool>> predicate = x => (string.IsNullOrEmpty(search) || search == "null" || x.Caption.Contains(search)
+            )
             && x.IsDeleted == false;
             var result = uow.GetRepository<Video>().Queryable()
                 .AsNoTracking()

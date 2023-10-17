@@ -53,6 +53,12 @@ namespace TiktokAPI.Controllers
             this.postService.DeletePost(videoID);
             return Ok(new ApiResponse("Success", 200));
         }
+        [HttpGet("GetVideosByTagName/{tagName}")]
+        public ActionResult GetVideosByTagName(string tagName)
+        {
+            var result=this.postService.GetVidesByTagName(tagName);
+            return Ok(new ApiResponse("Success", 220, data: result));
+        }
 
     }
 }

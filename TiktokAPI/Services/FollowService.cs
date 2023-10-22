@@ -90,5 +90,42 @@ namespace TiktokAPI.Services
             var result = queryable.Take(model.PageSize * model.PageNumber).ToList();
             return result;
         }
+
+        public FollowingRelationshipModel GetFollwersAndFollowings(long userId)
+        {
+            Expression<Func<FollowRelationship, bool>> followersPredicate = x => x.IsDeleted == false && x.Followeduser == userId;
+            var followers = this.uow.GetRepository<FollowRelationship>().Queryable()
+                 .AsNoTracking()
+                 .Include(x => x.FollowerUserNavigation)
+                 .Where(followersPredicate)
+                 .Select(x => new UserInfomation
+                 {
+                     Avatar=x.FollowerUserNavigation.Avatar,
+                     Bio=x.FollowerUserNavigation.Bio,
+                     DisplayedName=x.FollowerUserNavigation.DisplayedName,
+                     UserName=x.FollowerUserNavigation.UserName ,
+                     UserId=x.FollowerUserNavigation.UserId 
+                 }).ToList();
+            Expression<Func<FollowRelationship, bool>> followingPredicate = x => x.IsDeleted == false && x.FollowerUser == userId;
+            var followings = this.uow.GetRepository<FollowRelationship>().Queryable()
+                 .AsNoTracking()
+                 .Include(x => x.FolloweduserNavigation)
+                 .Where(followingPredicate)
+                 .Select(x => new UserInfomation
+                 {
+                     Avatar = x.FolloweduserNavigation.Avatar,
+                     Bio = x.FolloweduserNavigation.Bio,
+                     DisplayedName = x.FolloweduserNavigation.DisplayedName,
+                     UserName = x.FolloweduserNavigation.UserName,
+                     UserId = x.FolloweduserNavigation.UserId
+                 }).ToList();
+            var result = new FollowingRelationshipModel
+            {
+               UserId=userId,
+               Followers=followers,
+               Followings=followings
+            };
+            return result;
+        }
     }
 }

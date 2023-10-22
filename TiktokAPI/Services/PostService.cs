@@ -33,7 +33,7 @@ namespace TiktokAPI.Services
             }
             var uploadPath = Path.Combine(_hostEnvironment.ContentRootPath, "uploads");
             var uniqueFileName = Guid.NewGuid().ToString() + "_" + file.VideoFile.FileName;
-            var filePath = Path.Combine(uploadPath, uniqueFileName);
+            var filePath = Path.Combine(uploadPath, uniqueFileName); ;
             if (!Directory.Exists(uploadPath))
             {
                 Directory.CreateDirectory(uploadPath);
@@ -48,7 +48,7 @@ namespace TiktokAPI.Services
                 Caption = file.Caption,
                 IsDeleted = false,
                 UploadDate = DateTime.Now,
-                VideoUrl = filePath,
+                VideoUrl =    Path.Combine("uploads", uniqueFileName),
                 UserId = userInfo.UserId
             };
             uow.GetRepository<Video>().Insert(newVideo);
@@ -229,6 +229,33 @@ namespace TiktokAPI.Services
                           HasTagName = z.HasTag.HashTagName
                       }).ToList()
                   }).ToList();
+            return result;
+        }
+
+        public IList<VideoOverview> GetVideosForUser(long userId)
+        {
+            Expression<Func<Video, bool>> predicate = x => x.IsDeleted == false && x.UserId == userId;
+            var result = uow.GetRepository<Video>().Queryable()
+               .AsNoTracking()
+               .Include(x => x.User)
+               .Include(x => x.Likes)
+               .Include(x => x.Comments)
+               .Where(predicate).Select(y => new VideoOverview
+               {
+                   User = new UserInfomation
+                   {
+                       UserId = y.UserId,
+                       Avatar = y.User.Avatar,
+                       UserName = y.User.UserName,
+                       DisplayedName = y.User.DisplayedName
+                   },
+                   Caption = y.Caption,
+                   Comment = y.Comments.Where(z => z.IsDeleted == false).Count(),
+                   Like = y.Likes.Where(z => z.IsDislike == false).Count(),
+                   UploadDate = y.UploadDate,
+                   VideoId = y.VideoId,
+                   VideoUrl = y.VideoUrl,
+               }).ToList();
             return result;
         }
     }

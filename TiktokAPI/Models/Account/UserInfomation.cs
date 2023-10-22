@@ -23,6 +23,24 @@ namespace TiktokAPI.Models.Account
         public bool? IsDeleted { get; set; }
       
     }
+
+    public class UserUploadModel
+    {
+     
+        [JsonProperty("userName")]
+        public string? UserName { get; set; }
+
+        [JsonProperty("displayedName")]
+        public string? DisplayedName { get; set; }
+
+        [JsonProperty("bio")]
+        public string? Bio { get; set; }
+        [JsonProperty("avatar")]
+        public  IFormFile? Avatar { get; set; }
+
+    }
+
+
     public class SignUpRequest
     {
         [JsonProperty("userName")]

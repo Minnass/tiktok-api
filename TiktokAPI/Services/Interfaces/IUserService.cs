@@ -7,5 +7,7 @@ namespace TiktokAPI.Services.Interfaces
     {
         IList<UserInfomation> GetSuggestedUsers(SuggestedCollection model);
         IList<UserInfomation> GetUsers(string search);
+        UserInfomation GetUserInfomation(string userName);
+        void UploadUser(UserUploadModel model);
     }
 }

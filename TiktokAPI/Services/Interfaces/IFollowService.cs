@@ -12,5 +12,6 @@ namespace TiktokAPI.Services.Interfaces
         IList<long?> GetFollower(long userId);
         IList<long?>GetFollowingUser(long userId);
         IList<UserInfomation>GetFollowingUserForPaged(FollowingPaged userId);
+        FollowingRelationshipModel GetFollwersAndFollowings(long userId);
     }
 }

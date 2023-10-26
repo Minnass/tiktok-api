@@ -22,7 +22,7 @@ namespace TiktokAPI.Controllers
 
         [AllowAnonymous]
         [HttpGet("{search}")]
-        public ActionResult GetUsers(string search)
+        public ActionResult GetUsers(string? search)
         {
             var result = this.userService.GetUsers(search);
             return Ok(new ApiResponse("Success", 200, data: result));

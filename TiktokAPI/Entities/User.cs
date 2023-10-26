@@ -13,6 +13,7 @@ namespace TiktokAPI.Entities
             Likes = new HashSet<Like>();
             Notifications = new HashSet<Notification>();
             RefreshTokens = new HashSet<RefreshToken>();
+            Searches = new HashSet<Search>();
             Videos = new HashSet<Video>();
         }
 
@@ -32,6 +33,7 @@ namespace TiktokAPI.Entities
         public virtual ICollection<Like> Likes { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<RefreshToken> RefreshTokens { get; set; }
+        public virtual ICollection<Search> Searches { get; set; }
         public virtual ICollection<Video> Videos { get; set; }
     }
 }

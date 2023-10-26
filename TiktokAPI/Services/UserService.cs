@@ -12,10 +12,12 @@ namespace TiktokAPI.Services
     {
         private readonly IUnitOfWork<TikTerDBContext> uow;
         private readonly IAuthService authService;
-        public UserService(IUnitOfWork<TikTerDBContext> uow, IAuthService authService)
+        private readonly IWebHostEnvironment _hostEnvironment;
+        public UserService(IUnitOfWork<TikTerDBContext> uow, IAuthService authService, IWebHostEnvironment webHostEnvironment)
         {
             this.uow = uow;
             this.authService = authService;
+            this._hostEnvironment = webHostEnvironment;
         }
         public IList<UserInfomation> GetSuggestedUsers(SuggestedCollection model)
         {
@@ -71,7 +73,7 @@ namespace TiktokAPI.Services
             return result;
         }
 
-        public void UploadUser(UserUploadModel model)
+        public async void UploadUser(UserUploadModel model)
         {
             var userId = this.authService.getUserInfoFromJwt().UserId;
             Expression<Func<User, bool>> predicate = x => x.IsDeleted == false && x.UserId == userId;
@@ -84,7 +86,18 @@ namespace TiktokAPI.Services
             }
             if(model.Avatar!=null)
             {
-
+                var uploadPath = Path.Combine(_hostEnvironment.ContentRootPath, "images");
+                var uniqueFileName = Guid.NewGuid().ToString() + "_" + model.Avatar.FileName;
+                var filePath = Path.Combine(uploadPath, uniqueFileName);
+                if (!Directory.Exists(uploadPath))
+                {
+                    Directory.CreateDirectory(uploadPath);
+                }
+                using (var stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await model.Avatar.CopyToAsync(stream);
+                }
+                user.Avatar = Path.Combine("images", uniqueFileName);
             }
             user.Bio = model.Bio;
             user.DisplayedName=model.DisplayedName;

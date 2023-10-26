@@ -10,7 +10,7 @@ namespace TiktokAPI.Services.Interfaces
         void FollowOrUnFollow(FollowRelationshipModel model);
   
         IList<long?> GetFollower(long userId);
-        IList<long?>GetFollowingUser(long userId);
+        IList<UserInfomation>GetFollowingUser(long userId);
         IList<UserInfomation>GetFollowingUserForPaged(FollowingPaged userId);
         FollowingRelationshipModel GetFollwersAndFollowings(long userId);
     }

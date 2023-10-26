@@ -59,6 +59,7 @@ namespace TiktokAPI.Controllers
             var result=this.postService.GetVidesByTagName(tagName);
             return Ok(new ApiResponse("Success", 220, data: result));
         }
+        [AllowAnonymous]
         [HttpGet("GetVideosForUser/{userId}")]
         public ActionResult GetVideosByUser(long userId)
         {

@@ -60,14 +60,21 @@ namespace TiktokAPI.Services
             return result;
         }
 
-        public IList<long?> GetFollowingUser(long userId)
+        public IList<UserInfomation> GetFollowingUser(long userId)
         {
             Expression<Func<FollowRelationship, bool>> predicate = x => x.IsDeleted == false
            && x.FollowerUser == userId;
             var result = this.uow.GetRepository<FollowRelationship>()
             .Queryable()
+            .Include(x=>x.FolloweduserNavigation)
         .AsNoTracking()
-        .Where(predicate).Select(x => x.Followeduser)
+        .Where(predicate).Select(x => new UserInfomation
+        {
+            Avatar=x.FolloweduserNavigation.Avatar,
+            DisplayedName=x.FolloweduserNavigation.DisplayedName,
+            UserName= x.FolloweduserNavigation.UserName,
+            UserId= x.FolloweduserNavigation.UserId
+        })
         .ToList();
             return result;
         }

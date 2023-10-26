@@ -35,7 +35,7 @@ namespace TiktokAPI.Models.Account
 
         [JsonProperty("bio")]
         public string? Bio { get; set; }
-        [JsonProperty("avatar")]
+        [JsonProperty(" ")]
         public  IFormFile? Avatar { get; set; }
 
     }

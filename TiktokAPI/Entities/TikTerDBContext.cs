@@ -23,6 +23,7 @@ namespace TiktokAPI.Entities
         public virtual DbSet<Like> Likes { get; set; } = null!;
         public virtual DbSet<Notification> Notifications { get; set; } = null!;
         public virtual DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
+        public virtual DbSet<Search> Searches { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
         public virtual DbSet<Video> Videos { get; set; } = null!;
 
@@ -215,6 +216,26 @@ namespace TiktokAPI.Entities
                     .HasForeignKey(d => d.UserId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("fk_refreshToken_User");
+            });
+
+            modelBuilder.Entity<Search>(entity =>
+            {
+                entity.ToTable("search");
+
+                entity.Property(e => e.SearchId)
+                    .HasColumnName("searchId")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.KeyWord)
+                    .HasColumnType("character varying")
+                    .HasColumnName("keyWord");
+
+                entity.Property(e => e.UserId).HasColumnName("userId");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Searches)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("search_userId_fkey");
             });
 
             modelBuilder.Entity<User>(entity =>

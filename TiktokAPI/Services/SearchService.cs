@@ -14,7 +14,7 @@ namespace TiktokAPI.Services
             this.uow = uow;
         }
 
-        public int Add(SearchModel model)
+        public long Add(SearchModel model)
         {
             var existedItem = this.uow.GetRepository<Search>().Queryable()
                 .AsNoTracking()

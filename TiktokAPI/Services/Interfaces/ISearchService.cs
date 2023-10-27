@@ -6,6 +6,6 @@ namespace TiktokAPI.Services.Interfaces
     {
         IList<SearchModel> GetKeywordByUser(long userId);
         void Delete(long searchId);
-        int Add(SearchModel model);
+        long Add(SearchModel model);
     }
 }

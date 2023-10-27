@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using System.Net;
 using TiktokAPI.Entities;
 using TiktokAPI.Models;
 using TiktokAPI.Models.ApiResponse;
@@ -9,6 +11,7 @@ namespace TiktokAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize(AuthenticationSchemes = "Bearer")]
     public class SearchController : ControllerBase
     {
         private readonly ISearchService userService;
@@ -17,7 +20,7 @@ namespace TiktokAPI.Controllers
             this.userService = searchService;
         }
         [HttpGet("{userId}")]
-        public ActionResult GetSearchedKeywords(long userId)
+        public ActionResult GetSearchedByUser(long userId)
         {
             var result = userService.GetKeywordByUser(userId);
             return Ok(new ApiResponse("Success", 200, data: result));

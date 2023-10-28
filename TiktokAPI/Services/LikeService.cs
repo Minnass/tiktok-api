@@ -18,7 +18,7 @@ namespace TiktokAPI.Services
 
         public IList<long?> GetLikedVideo(long userId)
         {
-            Expression<Func<Like, bool>> predicate = x => x.UserId == userId;
+            Expression<Func<Like, bool>> predicate = x => x.UserId == userId&&x.IsDislike==false;
             var result=uow.GetRepository<Like>().Queryable().AsNoTracking().Where(predicate).Select(x=>x.VideoId).ToList();
             return result;
         }
@@ -33,7 +33,7 @@ namespace TiktokAPI.Services
         public void LikeOrDislike(LikeModel model)
         {
             Expression<Func<Like, bool>> predicae = x => x.VideoId == model.VideoId && x.UserId ==model.UserId;
-            var item=uow.GetRepository<Like>().Queryable().AsNoTracking().Where(predicae).FirstOrDefault();
+            var item=uow.GetRepository<Like>().Queryable().Where(predicae).FirstOrDefault();
             if (item != null)
             {
                 item.IsDislike=!item.IsDislike;

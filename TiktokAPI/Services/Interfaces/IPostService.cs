@@ -10,6 +10,7 @@ namespace TiktokAPI.Services.Interfaces
         IList<VideoOverview> GetVidesByTagName(string name);
         IList<VideoOverview> GetVideosForUser(long userId);
         IList<VideoOverview> GetFollowingVideos(IList<long> ids);
+        IList<VideoOverview> GetLikedVideos(long userId);
         Task CreatePost(PostRequestModel file);
         void DeletePost(long ID);
     }

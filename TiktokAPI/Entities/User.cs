@@ -8,6 +8,7 @@ namespace TiktokAPI.Entities
         public User()
         {
             Comments = new HashSet<Comment>();
+            Feedbacks = new HashSet<Feedback>();
             FollowRelationshipFolloweduserNavigations = new HashSet<FollowRelationship>();
             FollowRelationshipFollowerUserNavigations = new HashSet<FollowRelationship>();
             Likes = new HashSet<Like>();
@@ -28,6 +29,7 @@ namespace TiktokAPI.Entities
         public bool? IsDeleted { get; set; }
 
         public virtual ICollection<Comment> Comments { get; set; }
+        public virtual ICollection<Feedback> Feedbacks { get; set; }
         public virtual ICollection<FollowRelationship> FollowRelationshipFolloweduserNavigations { get; set; }
         public virtual ICollection<FollowRelationship> FollowRelationshipFollowerUserNavigations { get; set; }
         public virtual ICollection<Like> Likes { get; set; }

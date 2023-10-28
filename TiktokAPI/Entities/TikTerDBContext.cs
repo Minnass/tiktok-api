@@ -17,6 +17,7 @@ namespace TiktokAPI.Entities
         }
 
         public virtual DbSet<Comment> Comments { get; set; } = null!;
+        public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
         public virtual DbSet<FollowRelationship> FollowRelationships { get; set; } = null!;
         public virtual DbSet<HashTag> HashTags { get; set; } = null!;
         public virtual DbSet<HashtagVideo> HashtagVideos { get; set; } = null!;
@@ -69,6 +70,34 @@ namespace TiktokAPI.Entities
                     .WithMany(p => p.Comments)
                     .HasForeignKey(d => d.VideoId)
                     .HasConstraintName("fk_comment_video");
+            });
+
+            modelBuilder.Entity<Feedback>(entity =>
+            {
+                entity.ToTable("feedback");
+
+                entity.Property(e => e.Id)
+                    .HasColumnName("id")
+                    .UseIdentityAlwaysColumn();
+
+                entity.Property(e => e.Image)
+                    .HasColumnType("character varying")
+                    .HasColumnName("image");
+
+                entity.Property(e => e.Problem)
+                    .HasColumnType("character varying")
+                    .HasColumnName("problem");
+
+                entity.Property(e => e.Title)
+                    .HasColumnType("character varying")
+                    .HasColumnName("title");
+
+                entity.Property(e => e.UserId).HasColumnName("userId");
+
+                entity.HasOne(d => d.User)
+                    .WithMany(p => p.Feedbacks)
+                    .HasForeignKey(d => d.UserId)
+                    .HasConstraintName("feedback_userId_fkey");
             });
 
             modelBuilder.Entity<FollowRelationship>(entity =>

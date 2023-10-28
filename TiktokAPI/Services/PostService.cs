@@ -258,5 +258,34 @@ namespace TiktokAPI.Services
                }).ToList();
             return result;
         }
+
+        public IList<VideoOverview> GetLikedVideos(long userId)
+        {
+            Expression<Func<Like, bool>> predicate = x => x.IsDislike == false && x.UserId == userId;
+            var result=this.uow.GetRepository<Like>()
+                .Queryable()
+                .AsNoTracking()
+                .Include(x=>x.Video)
+                .ThenInclude(y=>y.User)
+                .Where(predicate)
+                .Select(x =>
+                      new VideoOverview
+                          {
+                   User = new UserInfomation
+                   {
+                       UserId = x.Video.User.UserId,
+                       Avatar = x.Video.User.Avatar,
+                       UserName = x.Video.User.UserName,
+                       DisplayedName = x.Video.User.DisplayedName
+                   },
+                   Caption = x.Video.Caption,
+                   Comment = x.Video.Comments.Where(z => z.IsDeleted == false).Count(),
+                   Like = x.Video.Likes.Where(z => z.IsDislike == false).Count(),
+                   UploadDate = x.Video.UploadDate,
+                   VideoId = x.Video.VideoId,
+                   VideoUrl = x.Video.VideoUrl,
+               }).ToList();
+            return result;
+        }
     }
 }

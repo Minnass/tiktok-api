@@ -29,6 +29,7 @@ builder.Services.AddScoped<ILikeService, LikeService>();
 builder.Services.AddScoped<ICommentService, CommentService>();
 builder.Services.AddScoped<IFollowService, FollowService>();
 builder.Services.AddScoped<ISearchService, SearchService>();
+builder.Services.AddScoped<IFeedbackService, FeedbackService>();
 //JWT
 var jwtTokenConfig = configuration.GetSection("jwtTokenConfig").Get<JwtTokenConfig>();
 builder.Services.AddSingleton(jwtTokenConfig);
@@ -113,6 +114,12 @@ app.UseStaticFiles(new StaticFileOptions
     FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "images")),
     RequestPath = "/images"
 });
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(Path.Combine(Directory.GetCurrentDirectory(), "feedbacks")),
+    RequestPath = "/feedbacks"
+});
+
 
 app.UseCors("AllowLocalhost");
 app.UseAuthentication();

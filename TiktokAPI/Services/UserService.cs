@@ -73,7 +73,7 @@ namespace TiktokAPI.Services
             return result;
         }
 
-        public async void UploadUser(UserUploadModel model)
+        public async Task UploadUser(UserUploadModel model)
         {
             var userId = this.authService.getUserInfoFromJwt().UserId;
             Expression<Func<User, bool>> predicate = x => x.IsDeleted == false && x.UserId == userId;
@@ -101,7 +101,7 @@ namespace TiktokAPI.Services
             }
             user.Bio = model.Bio;
             user.DisplayedName=model.DisplayedName;
-            uow.SaveChanges();
+            this.uow.SaveChanges();
         }
     }
 }
